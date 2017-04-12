@@ -50,7 +50,9 @@ library(lubridate)
 var<-as.data.frame(flight[,c("year", "month","day","arr_delay")])
 var$date<-with(var, ymd(sprintf('%04d%02d%02d', year, month, day)))
 var1<-as.data.frame(var[,c("date","arr_delay")])
-scatterplotMatrix(var1,spread=FALSE, smoother.args=list(lty=2), main="Scatter Plot Matrix")
+
+plot(var1$date, var1$arr_delay, main="Scatterplot",
+   xlab="Date ", ylab="Arrical Delay ", pch=19) 
 
 ```
 
