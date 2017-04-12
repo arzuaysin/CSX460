@@ -1,7 +1,7 @@
 ---
 title: "Assingment NYC Flight Data"
-author: "Your Name Here"
-date: "October 5, 2016"
+author: "Arzu Aysin Tekindor"
+date: "April 11, 2017"
 output: html_document
 ---
 
@@ -24,7 +24,8 @@ Put code in each of the sections provided.
 Using the `readr` package read the `flights` data.
 
 ```{r}
-
+library(readr)
+flight <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/data/flights.csv")
 
 ```
 
@@ -33,6 +34,9 @@ Using the `readr` package read the `flights` data.
 Plot a histogram of arrival delays and departure delays 
 
 ```{r}
+library(ggplot2)
+hist(flight$arr_delay, col='blue',xlim=c(0, 500))
+hist(flight$dep_delay, col='red', add=T)
 
 ```
 
@@ -41,6 +45,12 @@ Plot a histogram of arrival delays and departure delays
 Plot a scatterplot of date vs arrival delay 
 
 ```{r}
+library(car)
+library(lubridate)
+var<-as.data.frame(flight[,c("year", "month","day","arr_delay")])
+var$date<-with(var, ymd(sprintf('%04d%02d%02d', year, month, day)))
+var1<-as.data.frame(var[,c("date","arr_delay")])
+scatterplotMatrix(var1,spread=FALSE, smoother.args=list(lty=2), main="Scatter Plot Matrix")
 
 ```
 
@@ -51,7 +61,11 @@ Plot a scatterplot of date vs arrival delay
 Create a `table`, counting the flights by origin airports and carrier.
 
 ```{r}
-
+library(dplyr)
+Total<-flight%>%
+  group_by(origin, carrier) %>% 
+   tally()
+Total
 
 ```
 
@@ -61,6 +75,20 @@ Create a `table`, counting the flights by origin airports and carrier.
 **Read** in the other data sets. Use methods to join the data together to create a single table containing one record per row.  (HINT: see `?data.table` or `?dplyr::join`)
 
 ```{r}
+airports <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/data/airports.csv")
+planes <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/data/planes.csv")
+weather <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/data/weather.csv")
+
+flight_planes <- left_join(flight, planes)
+
+a<-dplyr::left_join(flight, planes, by = c( "tailnum"))
+b<-dplyr::left_join(a, weather, by = c("origin", "time_hour"))
+
+names(airports)[1] <- "origin"
+
+c<-dplyr::left_join(a, airports, by = c("origin"))
+
+str(c)
 
 ```
 
