@@ -1,7 +1,7 @@
 ---
 title: "Assingment NYC Flight Data"
 author: "Arzu Aysin Tekindor"
-date: "April 11, 2017"
+date: "April 12, 2017"
 output: html_document
 ---
 
@@ -33,7 +33,7 @@ flight <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/da
 
 Plot a histogram of arrival delays and departure delays 
 
-```{r}
+```{r , message=FALSE, warning=FALSE, error=FALSE}
 library(ggplot2)
 hist(flight$arr_delay, col='blue',xlim=c(0, 500))
 hist(flight$dep_delay, col='red', add=T)
@@ -44,7 +44,7 @@ hist(flight$dep_delay, col='red', add=T)
 
 Plot a scatterplot of date vs arrival delay 
 
-```{r}
+```{r, message=FALSE, warning=FALSE, error=FALSE}
 library(car)
 library(lubridate)
 var<-as.data.frame(flight[,c("year", "month","day","arr_delay")])
@@ -52,7 +52,7 @@ var$date<-with(var, ymd(sprintf('%04d%02d%02d', year, month, day)))
 var1<-as.data.frame(var[,c("date","arr_delay")])
 
 plot(var1$date, var1$arr_delay, main="Scatterplot",
-   xlab="Date ", ylab="Arrical Delay ", pch=19) 
+   xlab="Date ", ylab="Arrival Delay ", pch=19) 
 
 ```
 
@@ -62,7 +62,7 @@ plot(var1$date, var1$arr_delay, main="Scatterplot",
 
 Create a `table`, counting the flights by origin airports and carrier.
 
-```{r}
+```{r, message=FALSE, warning=FALSE, error=FALSE}
 library(dplyr)
 Total<-flight%>%
   group_by(origin, carrier) %>% 
@@ -76,7 +76,7 @@ Total
 
 **Read** in the other data sets. Use methods to join the data together to create a single table containing one record per row.  (HINT: see `?data.table` or `?dplyr::join`)
 
-```{r}
+```{r, message=FALSE, warning=FALSE, error=FALSE}
 airports <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/data/airports.csv")
 planes <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/data/planes.csv")
 weather <- read_csv("~/CSX460/CSX460/02-building-blocks/02-exercise-nycflights/data/weather.csv")

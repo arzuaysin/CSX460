@@ -1,0 +1,73 @@
+---
+title: "NYCFlights: Arrival Delay Regression Model (Open Ended Variation)"
+author: "Arzu Aysin Tekindor"
+date: "April 18,2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# NYCFlights Model
+
+Using the rectangular data that you created last week create a model for `arr_delay`. Follow a well defined process for creating a model as discussed in class or from one of the readings. 
+
+Break the process down into steps and create a codeblock for each step. 
+ - Use as many steps you feel as necessary
+ - Concisely explain each step 
+ - Show all work
+ 
+(You can start with the data that you created last week.)
+
+
+## Step 1: [Data Wrangling and Preparation] 
+
+```{r "Step 1: [Data Wrangling and Preparation]" }
+library(caret)
+library(knitr)
+library(pROC)
+
+# Columns not related to exercise performance.
+col.nrel <- c("day", "hour", "minute", "lat", 
+              "lon", "alt", "tz","dst","speed")
+# Columns with near zero variance
+nsv <- nearZeroVar(c, saveMetrics = TRUE)
+col.nzvs <- rownames(nsv[nsv$nzv == TRUE, ])
+# Update the training set with the remaining fields
+col.drops <- c(col.nrel, col.nzvs)
+data <- c[,!(names(c) %in% col.drops)]
+col.names = colnames(data)
+
+# Delete missing values.
+data1 <- na.omit(data)
+col.names
+str(data1)
+
+#Create a season variable
+data1$season<-5
+data1$season[data1$month<3 | data1$month==12] <- 1
+data1$season[3<=data1$month & data1$month<=5] <- 2
+data1$season[6<data1$month & data1$month<=8] <- 3
+data1$season[9 <= data1$month & data1$month<=11] <- 4
+
+# Convert "month" to factor
+data1$season<-as.factor(data1$season)
+
+```
+
+## Step 2: [Create a sample] 
+```{r "Step 1: [Create a sample]" }
+
+sample<-data1[sample(nrow(data1), 10000), ]
+```
+
+## Step 3: [MODEL] 
+```{r "Step 3: [MODEL]" }
+fit<-lm(formula= arr_delay ~ season+dep_delay  +  
+  carrier+flight+ origin+ dest+ dep_delay+  air_time  + distance   + engine+ seats,data=sample)
+summary(fit)
+```
+# Question:
+Is this a good model?  (My model was fine. I have many signigicant results.I created a season variable. I see that spring, summer and fall had positive effect on arrival delay comparing to winter. Distance, arrival time, seats and deperture delay have potisitive effect on arrival delay . R square is 0.89.)
+
