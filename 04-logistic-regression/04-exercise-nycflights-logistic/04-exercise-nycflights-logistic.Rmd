@@ -1,7 +1,7 @@
 ---
 title: "NYCFlights: Arrival Delay Logictic Model"
-author: "[Your Name]"
-date: "[Today's Date]"
+author: "Arzu Aysin Tekindor"
+date: "5/3/2017"
 output: html_document
 ---
 
@@ -24,7 +24,38 @@ knitr::opts_chunk$set(echo = TRUE)
 **Hint:** For plotting curves see `?graphics::curve` or `?ggplot2::stat_function`
 
 ```{r "Logistic and Inverse Logistic" }
+#for graphs
+x <- c(-10:10)
+Beta0 = 0.5
+intercept = 1
+#formula
+y <- 1/(1 + exp((Beta0 + intercept*x)))
 
+
+library(ggplot2)
+qplot(x,y)
+
+#formula for inverse
+y1 <- exp((Beta0 + intercept*x)) / (1 + exp((Beta0 + intercept*x)))
+
+qplot (x,y1)
+
+
+#functions
+#Logistic
+function1 <- function(Beta) { x <- c(-10:10)
+Beta0 = 0.5
+intercept = 1
+y <- 1/(1 + exp((Beta0 + intercept*x)))
+}
+
+#Inverse Logistic
+
+function2 <- function(Beta) { x <- c(-10:10)
+Beta0 = 0.5
+intercept = 1
+y <- exp((Beta0 + intercept*x)) / (1 + exp((Beta0 + intercept*x)))
+}
 ```
 
 
@@ -33,14 +64,67 @@ knitr::opts_chunk$set(echo = TRUE)
 Using the rectangular data that you created from the earlier assignment and following theexample from the text and class, create a model for arr_delay >= 22 minutes. Describe/Explain each of the steps and show all work.
 
 KNIT YOUR DOCUMENT AS *HTML* AND SUBMIT IT AND THE `Rmd` file to your repository.   
+## Step 1: [Create data for the model] 
+```{r "Model" }
 
+library(caret)
+library(knitr)
+library(pROC)
+# Columns not related to exercise performance.
+col.nrel <- c("day", "hour", "minute", "lat", 
+              "lon", "alt", "tz","dst","speed")
+
+# Columns with near zero variance
+nsv <- nearZeroVar(c, saveMetrics = TRUE)
+col.nzvs <- rownames(nsv[nsv$nzv == TRUE, ])
+# Update the training set with the remaining fields
+col.drops <- c(col.nrel, col.nzvs)
+data <- c[,!(names(c) %in% col.drops)]
+col.names = colnames(data)
+
+# Delete missing values.
+data1 <- na.omit(data)
+col.names
+str(data1)
+
+#Create a season variable
+data1$season<-5
+data1$season[data1$month<3 | data1$month==12] <- 1
+data1$season[3<=data1$month & data1$month<=5] <- 2
+data1$season[6<data1$month & data1$month<=8] <- 3
+data1$season[9 <= data1$month & data1$month<=11] <- 4
+
+# Convert "month" to factor
+data1$season<-as.factor(data1$season)
+
+```
+
+## Step 2: [Create a sample] 
+```{r "Step 2: [Create a sample]" }
+
+sample<-data1[sample(nrow(data1), 10000), ]
+
+
+```
+
+
+## Step 3: [Create the dependant variable] 
+```{r "Step 3: [Create the dependant variable]" }
+sample$arr_delay22 <- ifelse(sample$arr_delay > 22,
+1,0)
+```
+## Step 4: [Create model] 
+```{r "Step 4: [Create model]" }
+fit<-glm(formula = arr_delay22 ~ season+dep_delay  +  
+  carrier+flight+ origin+ dep_delay+  air_time  + distance   + engine+ seats, family = binomial(link = "logit"),  data = sample)
+summary(fit)
+```
 
 # Question:
 
 Is this a good model?  (Write your answer here.)
-
+I don't have a good model. I need to work more on it. 
 
 # PART B:
 
 Your model should be good at explaining tardiness. Now, assume that your job is to predict arrival delays a month in advance. You can no longer use all the features in your model. Retrain your model using only features that will be *known* only a month in advance of the departure time.  Show all steps as above.
-
