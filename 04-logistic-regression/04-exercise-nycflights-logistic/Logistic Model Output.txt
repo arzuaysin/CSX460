@@ -1,0 +1,53 @@
+Call:
+glm(formula = arr_delay22 ~ season + dep_delay + carrier + flight + 
+    origin + dep_delay + air_time + distance + engine + seats, 
+    family = binomial(link = "logit"), data = sample)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.5897  -0.2668  -0.1499  -0.0670   3.6928  
+
+Coefficients:
+                      Estimate Std. Error z value Pr(>|z|)    
+(Intercept)         -2.120e+01  5.354e+02  -0.040 0.968412    
+season2              5.257e-01  1.325e-01   3.969 7.22e-05 ***
+season3              1.306e+00  1.522e-01   8.580  < 2e-16 ***
+season4              5.490e-02  1.521e-01   0.361 0.718191    
+season5              8.148e-01  1.937e-01   4.207 2.59e-05 ***
+dep_delay            1.304e-01  3.318e-03  39.294  < 2e-16 ***
+carrierAA           -8.809e-02  4.587e-01  -0.192 0.847704    
+carrierAS            9.349e-02  1.477e+00   0.063 0.949539    
+carrierB6            1.241e+00  3.204e-01   3.873 0.000107 ***
+carrierDL            5.728e-01  3.144e-01   1.822 0.068499 .  
+carrierEV            1.124e+00  2.792e-01   4.026 5.68e-05 ***
+carrierF9            1.058e+00  8.421e-01   1.257 0.208918    
+carrierFL            1.631e+00  5.615e-01   2.905 0.003674 ** 
+carrierHA            5.267e+00  1.004e+00   5.247 1.54e-07 ***
+carrierMQ            5.457e-01  9.547e-01   0.572 0.567620    
+carrierOO           -7.721e+00  3.711e+02  -0.021 0.983401    
+carrierUA            4.453e-01  3.475e-01   1.282 0.199933    
+carrierUS            1.468e+00  3.387e-01   4.334 1.47e-05 ***
+carrierVX            4.004e-01  4.888e-01   0.819 0.412684    
+carrierWN            1.463e-01  3.681e-01   0.397 0.691065    
+carrierYV           -1.220e+00  1.504e+00  -0.811 0.417285    
+flight               4.132e-05  7.875e-05   0.525 0.599744    
+originJFK            2.193e-01  1.736e-01   1.263 0.206523    
+originLGA            2.468e-01  1.552e-01   1.590 0.111731    
+air_time             9.524e-02  4.188e-03  22.740  < 2e-16 ***
+distance            -1.223e-02  5.555e-04 -22.019  < 2e-16 ***
+engineReciprocating  1.553e+01  5.354e+02   0.029 0.976861    
+engineTurbo-fan      1.416e+01  5.354e+02   0.026 0.978897    
+engineTurbo-jet      1.434e+01  5.354e+02   0.027 0.978629    
+engineTurbo-prop     5.681e+00  1.084e+03   0.005 0.995819    
+engineTurbo-shaft    1.651e+01  5.354e+02   0.031 0.975400    
+seats                2.046e-03  9.748e-04   2.099 0.035844 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 9790.8  on 9999  degrees of freedom
+Residual deviance: 3243.8  on 9968  degrees of freedom
+AIC: 3307.8
+
+Number of Fisher Scoring iterations: 12
