@@ -1,0 +1,123 @@
+---
+title: "Caret / Recursive Partitioning"
+author: "Your Name Here"
+date: "Today's Date"
+output: word_document
+---
+
+```{r init, warning=FALSE, echo=FALSE, message=FALSE}
+library(rpart)
+library(caret)
+# .. Additional libraries
+```
+
+
+## Exercise 1: caret/logistic regression (5 points)
+
+Rebuild your logistic regression model from the previous week, this time using the `caret` package. 
+
+- Calculate the training or apparent performance of the model. 
+- Calculate an unbiased measure of performance 
+- Create a ROC Curve for your model
+
+Show all work.
+
+```{r logistic model}
+#  Training 
+
+data1$arr_delay22 <- ifelse(data1$arr_delay > 22,1,0)
+data1$arr_delay221<- as.factor(data1$arr_delay22)
+sample1<-data1[sample(nrow(data1), 10000), ]
+Train <- createDataPartition(sample1$arr_delay22 , p=0.7, list=FALSE)
+training <- sample1[ Train, ]
+testing <- sample1[ -Train, ]
+
+mod_fit <- train( as.factor(arr_delay22) ~ season+dep_delay  +  
+  flight+ origin+ dep_delay+  air_time  + distance   + seats,  data=training, method="glm", family="binomial")
+
+summary(mod_fit)
+exp(coef(mod_fit$finalModel))
+testp<-predict(mod_fit,testing,type='prob')[,2]
+pred<-prediction(testp,testing$arr_delay22)
+perf <-performance(pred,"tpr","fpr")
+
+#performance
+auc.perf = performance(pred, measure = "auc")
+auc.perf@y.values
+
+
+
+#Evaluation the performance
+mod_fit_one <- glm(arr_delay22 ~ season+dep_delay  +  
+  flight+ origin+ dep_delay+  air_time  + distance   + seats,   data=training, family="binomial")
+mod_fit_two <- glm(arr_delay22 ~ season+dep_delay  +  
+  flight+ origin+ dep_delay+  air_time  + distance   ,   data=training, family="binomial")
+
+anova(mod_fit_one, mod_fit_two, test ="Chisq")
+
+library(lmtest)
+lrtest(mod_fit_one, mod_fit_two)
+
+
+#ROC Curve
+library(ROCR)
+library(pROC)
+
+
+plot(perf,col="green",lwd=2,main="ROC Curve for Logistic ")
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
+
+
+
+```
+
+
+## Exercise 2: caret/rpart (5 points)
+
+Using the `caret` and `rpart` packages, create a **classification** model for flight delays using your NYC FLight data. Your solution should include:
+
+- The use of `caret` and `rpart` to train a model.
+- An articulation of the the problem your are 
+- An naive model
+- An unbiased calculation of the performance metric
+- A plot of your model -- (the actual tree; there are several ways to do this)
+- A discussion of your model 
+
+
+
+Show and describe all work
+
+```{r rpart model}
+training$arr_delay222 <- factor(training$arr_delay22,levels=c(1,0),
+                       labels=c("YES","NO")) 
+
+library(party)
+tree<-ctree(arr_delay222 ~ season+dep_delay  +  
+  flight+  dep_delay+  air_time  + distance,data=training, control = ctree_control(mincriterion = 0.90,maxdepth=10))
+
+plot(tree)
+
+
+treepred <- as.data.frame(do.call("rbind", treeresponse(tree, newdata = testing)))
+testing$tscore<-treepred[,1]
+treepred<-prediction(testing$tscore,testing$arr_delay22)
+treeperf <- performance(treepred,"tpr","fpr")
+
+library(ROCR)
+library(pROC)
+
+
+plot(treeperf,col="green",lwd=2,main="ROC Curve for TREE ")
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
+
+plot(treeperf,col='red',lwd=2, lty=1,main='ROC-Logistic vs Tree');
+plot(perf, col='blue',lwd=2, add=TRUE,lty=2);
+legend(0.6,0.6,c('Tree','Logistic'),col=c('red','blue'),lwd=2)
+abline(a=0,b=1,lwd=2,lty=4,col="gray")
+```
+
+
+### Questions:
+
+- Discuss the difference between the models and why you would use one model over the other?
+- How might you produce an ROC type curve for the *rpart* model? 
